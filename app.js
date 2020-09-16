@@ -24,7 +24,7 @@ const userSchema=new mongoose.Schema({
 });
 
 //userSchema.plugin(encrypt,{secret:process.env.SECRET,encryptedFields:["password"]}); //before creating model after schema
-const User=new mongoose.model("User",userSchema);
+const Users=new mongoose.model("User",userSchema);
 
 app.get("/",function(req,res){
      res.render("home");
@@ -53,7 +53,7 @@ app.post("/login",function(req,res){
      const username=req.body.username;
      const password=md5(req.body.password);
     
-     User.findOne({email:username},function(err,foundUser){
+     Users.findOne({email:username},function(err,foundUser){
      if(!err)
     { if(foundUser){
           if(foundUser.password === password)
