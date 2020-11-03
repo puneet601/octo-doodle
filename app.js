@@ -1,42 +1,50 @@
 //jshint esversion:6
 require('dotenv').config();
-const express=require("express");
-const mongoose=require("mongoose");
-const session = require('cookie-session');
-const passport=require("passport");
-const passportLocalMongoose=require("passport-local-mongoose");
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
-const findOrCreate=require("mongoose-findorcreate");
-const app=express(); 
-const bodyParser=require("body-parser");
-const ejs=require("ejs");
+const express = require("express");
+const bodyParser = require("body-parser");
+const ejs = require("ejs");
+const mongoose = require("mongoose");
+const session = require('express-session');
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
+
+const app = express();
 
 app.use(express.static("public"));
-app.set('view engine','ejs');
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(session({
-     secret:"I like Tuesdays and soop.",
-     resave:false,
-     saveUninitialized:false
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({
+  extended: true
 }));
+
+app.use(session({
+  secret: "Our little secret.",
+  resave: false,
+  saveUninitialized: false
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 mongoose.connect("mongodb+srv://admin-Puneet:Springday1!@cluster0.ergrz.mongodb.net/secrets",{useNewUrlParser:true,useUnifiedTopology: true });
 mongoose.set("useCreateIndex",true);
 
-const userSchema=new mongoose.Schema({
-     name: String,
-     email:String,
-     password:String,
-     googleId:String,
-     secret:String
-});
-
-userSchema.plugin(passportLocalMongoose); //before creating model after schema
-userSchema.plugin(findOrCreate);
-const User=new mongoose.model("User",userSchema);
-passport.use(User.createStrategy());
-passport.serializeUser(function(user, done) {
+const userSchema = new mongoose.Schema ({
+     email: String,
+     password: String,
+     googleId: String,
+     secret: String
+   });
+   
+   userSchema.plugin(passportLocalMongoose);
+   userSchema.plugin(findOrCreate);
+   
+   const User = new mongoose.model("User", userSchema);
+   
+   passport.use(User.createStrategy());
+   
+   passport.serializeUser(function(user, done) {
      done(null, user.id);
    });
    
@@ -46,22 +54,22 @@ passport.serializeUser(function(user, done) {
      });
    });
    
-passport.use(new GoogleStrategy({
-     authorizationURL: 'https://www.google.com/oauth2/authorize',
-     clientSecret: process.env.CLIENT_SECRET,
-     clientID: process.env.CLIENT_ID,
-     callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
-     useProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
-     
-   },
-  
- function(accessToken, refreshToken, profile, cb) {
+   passport.use(new GoogleStrategy({
+       clientID: process.env.CLIENT_ID,
+       clientSecret: process.env.CLIENT_SECRET,
+       callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
+       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+     },
+     function(accessToken, refreshToken, profile, cb) {
+       console.log(profile);
+   
+       User.findOrCreate({ googleId: profile.id }, function (err, user) {
+         return cb(err, user);
+       });
+     }
+   ));
+   
 
-     User.findOrCreate({ googleId: profile.id }, function(err, user) {
-       cb(err, user);
-     });
-   }
- ));
 app.get("/",function(req,res){
      res.render("home");
 });
