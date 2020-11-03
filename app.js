@@ -18,10 +18,18 @@ const MongoStore = require('connect-mongo')(session);
  
 app.use(session({
      secret:"I like Tuesdays and soop.",
+     store: new MongoStore(),
      resave:false,
-     saveUninitialized:false,
-     store: new MongoStore(options)
+     saveUninitialized:false
+     
 }));
+app.use(function(req,res,next){
+     if(!req.session){
+         return next(new Error('Oh no')) //handle error
+     }
+     next() //otherwise continue
+     });
+     
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,7 +59,7 @@ passport.serializeUser(function(user, done) {
    });
 passport.use(new GoogleStrategy({
      clientSecret: process.env.CLIENT_SECRET,
-     clientId: process.env.CLIENT_ID,
+     clientID: process.env.CLIENT_ID,
      callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
      useProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
      
