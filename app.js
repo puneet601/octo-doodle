@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express=require("express");
 const mongoose=require("mongoose");
-var session = require('cookie-session');
+var session = require('express-session');
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
@@ -47,7 +47,7 @@ passport.serializeUser(function(user, done) {
    });
 passport.use(new GoogleStrategy({
      clientSecret: process.env.CLIENT_SECRET,
-     clientID: process.env.CLIENT_ID,
+     clientId: process.env.CLIENT_ID,
      callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
      useProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
      
