@@ -45,7 +45,9 @@ passport.serializeUser(function(user, done) {
        done(err, user);
      });
    });
+   
 passport.use(new GoogleStrategy({
+     authorizationURL: 'https://www.google.com/oauth2/authorize',
      clientSecret: process.env.CLIENT_SECRET,
      clientID: process.env.CLIENT_ID,
      callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
