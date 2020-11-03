@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express=require("express");
 const mongoose=require("mongoose");
-const session = require('express-session');
+const session = require('cookie-session');
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
@@ -14,25 +14,13 @@ const ejs=require("ejs");
 app.use(express.static("public"));
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
-const MongoStore = require('connect-mongo')(session);
- 
 app.use(session({
      secret:"I like Tuesdays and soop.",
-     store: new MongoStore(),
      resave:false,
      saveUninitialized:false
-     
 }));
-app.use(function(req,res,next){
-     if(!req.session){
-         return next(new Error('Oh no')) //handle error
-     }
-     next() //otherwise continue
-     });
-     
 app.use(passport.initialize());
 app.use(passport.session());
-
 mongoose.connect("mongodb+srv://admin-Puneet:Springday1!@cluster0.ergrz.mongodb.net/secrets",{useNewUrlParser:true,useUnifiedTopology: true });
 mongoose.set("useCreateIndex",true);
 
@@ -59,7 +47,7 @@ passport.serializeUser(function(user, done) {
    });
 passport.use(new GoogleStrategy({
      clientSecret: process.env.CLIENT_SECRET,
-     clientID: process.env.CLIENT_ID,
+     clientId: process.env.CLIENT_ID,
      callbackURL: "https://limitless-springs-77151.herokuapp.com/auth/google/secrets",
      useProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
      
