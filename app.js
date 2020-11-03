@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express=require("express");
 const mongoose=require("mongoose");
-const session=require('express-session');
+var session = require('cookie-session');
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
