@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express=require("express");
 const mongoose=require("mongoose");
-var session = require('express-session');
+const session = require('express-session');
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
@@ -14,13 +14,17 @@ const ejs=require("ejs");
 app.use(express.static("public"));
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
+const MongoStore = require('connect-mongo')(session);
+ 
 app.use(session({
      secret:"I like Tuesdays and soop.",
      resave:false,
-     saveUninitialized:false
+     saveUninitialized:false,
+     store: new MongoStore(options)
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 mongoose.connect("mongodb+srv://admin-Puneet:Springday1!@cluster0.ergrz.mongodb.net/secrets",{useNewUrlParser:true,useUnifiedTopology: true });
 mongoose.set("useCreateIndex",true);
 
