@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 
 const app = express();
@@ -101,7 +101,7 @@ if(!err){
 app.post("/register",function(req,res){
 User.register({username: req.body.username}, req.body.password, function(err,user){
 if(err){console.log(err);
-res.redirect("/register");}
+res.redirect("/");}
 else{
      passport.authenticate("local")(req,res,function(){
 res.redirect("/secrets");
@@ -145,6 +145,6 @@ app.get("/logout",function(req,res){
 req.logout();
 res.redirect("/");
 });
-let port = process.env.PORT;
+let port = process.env.PORT || 3000;
 
 app.listen(port);
