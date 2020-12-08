@@ -27,7 +27,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://admin-Puneet:Springday1!@cluster0.ergrz.mongodb.net/secrets",{useNewUrlParser:true,useUnifiedTopology: true });
+mongoose.connect(process.env.URL,{useNewUrlParser:true,useUnifiedTopology: true });
 mongoose.set("useCreateIndex",true);
 
 const userSchema = new mongoose.Schema ({
